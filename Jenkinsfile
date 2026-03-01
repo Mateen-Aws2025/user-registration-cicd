@@ -9,11 +9,11 @@ pipeline {
     stages {
 
         stage('Checkout Code') {
-            steps {
-                git 'https://github.com/Mateen-Aws2025/user-registration-cicd.git'
-            }
-        }
-
+           steps {
+             git branch: 'main',
+             url: 'https://github.com/Mateen-Aws2025/user-registration-cicd.git'
+           }
+      }
         stage('Build with Maven') {
             steps {
                 sh 'mvn clean package -DskipTests'
