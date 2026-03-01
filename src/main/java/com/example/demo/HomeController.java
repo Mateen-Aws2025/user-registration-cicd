@@ -10,4 +10,9 @@ public class HomeController {
     public String home() {
         return "User Registration App Running 🚀";
     }
+
+    @GetMapping("/mateen")
+    public String mateen() {
+        return "User Registration App Running by mateen🚀";
+    }
 }
