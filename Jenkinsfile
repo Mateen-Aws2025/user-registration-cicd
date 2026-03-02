@@ -43,16 +43,35 @@ pipeline {
     }
         
     stage('Deploy Container') {
-         steps {
-            sh '''
-            docker stop user-registration-container || true
-            docker rm user-registration-container || true
-            docker run -d -p 8081:8080 \
-            --name user-registration-container \
-            mateensayyed/user-registration-app:$BUILD_NUMBER
-         '''
+       steps {
+         script {
+            def version = params.ROLLBACK_VERSION?.trim()
+
+            if (version) {
+                echo "Rolling back to version: ${version}"
+
+                sh """
+                docker stop user-registration-container || true
+                docker rm user-registration-container || true
+                docker pull mateensayyed/user-registration-app:${version}
+                docker run -d -p 8081:8080 \
+                --name user-registration-container \
+                mateensayyed/user-registration-app:${version}
+                """
+            } else {
+                echo "Deploying latest build: ${BUILD_NUMBER}"
+
+                sh """
+                docker stop user-registration-container || true
+                docker rm user-registration-container || true
+                docker run -d -p 8081:8080 \
+                --name user-registration-container \
+                mateensayyed/user-registration-app:${BUILD_NUMBER}
+                """
+            }
         }
-      }
+    }
+ }
     stage('Cleanup Old Images') {
          steps {
            sh '''
