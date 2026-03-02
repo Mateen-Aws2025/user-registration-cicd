@@ -15,4 +15,9 @@ public class HomeController {
     public String mateen() {
         return "User Registration App Running by mateen🚀";
     }
+
+    @GetMapping("/new")
+    public String mateen() {
+        return "User Registration App Running by mateen🚀 to check versioning of docker image";
+    }
 }
