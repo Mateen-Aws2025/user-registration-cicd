@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+    parameters {
+        string(
+            name: 'ROLLBACK_VERSION',
+            defaultValue: '',
+            description: 'Enter image version to rollback (leave empty for normal deploy)'
+        )
+    }
+
     environment {
         IMAGE_NAME = "user-registration-app"
         CONTAINER_NAME = "user-registration-container"
@@ -75,7 +83,7 @@ pipeline {
     stage('Cleanup Old Images') {
          steps {
            sh '''
-           docker images user-registration-app --format "{{.Tag}}" | \
+           docker images mateensayyed/user-registration-app --format "{{.Tag}}" | \
            sort -nr | tail -n +6 | \
            xargs -I {} docker rmi mateensayyed/user-registration-app:{} || true
         '''
