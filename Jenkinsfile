@@ -53,5 +53,14 @@ pipeline {
          '''
         }
       }
+    stage('Cleanup Old Images') {
+         steps {
+           sh '''
+           docker images user-registration-app --format "{{.Tag}}" | \
+           sort -nr | tail -n +6 | \
+           xargs -I {} docker rmi mateensayyed/user-registration-app:{} || true
+        '''
     }
+   }    
   }
+ }
