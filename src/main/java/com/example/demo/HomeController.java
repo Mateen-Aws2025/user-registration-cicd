@@ -13,7 +13,7 @@ public class HomeController {
 
     @GetMapping("/mateen")
     public String mateen() {
-        return "User Registration App Running by mateen🚀";
+        return "User Registration App Running by mateen sayyed🚀";
     }
 
     @GetMapping("/new")
