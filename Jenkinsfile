@@ -23,21 +23,35 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                  sh '''
-                docker build -t $IMAGE_NAME:$BUILD_NUMBER .
+                docker build -t mateensayyed/user-registration-app:$BUILD_NUMBER .
            '''
        }
     }
-
-        stage('Deploy Container') {
-            steps {
-                 sh '''
-                 docker stop $CONTAINER_NAME || true
-                 docker rm $CONTAINER_NAME || true
-                 docker run -d -p 8081:8080 \
-                 --name $CONTAINER_NAME \
-                 $IMAGE_NAME:$BUILD_NUMBER
-             '''
-           }
-        }
+     stage('Push to DockerHub') {
+        steps {
+            withCredentials([usernamePassword(
+            credentialsId: 'dockerhub-creds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh '''
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            docker push mateensayyed/user-registration-app:$BUILD_NUMBER
+            '''
+         }
+      }
     }
-}
+        
+    stage('Deploy Container') {
+         steps {
+            sh '''
+            docker stop user-registration-container || true
+            docker rm user-registration-container || true
+            docker run -d -p 8081:8080 \
+            --name user-registration-container \
+            mateensayyed/user-registration-app:$BUILD_NUMBER
+         '''
+        }
+      }
+    }
+  }
